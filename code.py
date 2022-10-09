@@ -43,6 +43,6 @@ while True:
     except Exception as e:
         matrixportal.set_text('There', 0)
         matrixportal.set_text('is an', 1)
-        matrixportal.set_text('Error')
+        matrixportal.set_text('Error', 2)
         time.sleep(5)
         pass
