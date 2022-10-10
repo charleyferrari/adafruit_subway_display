@@ -46,3 +46,7 @@ while True:
         matrixportal.set_text('Error', 2)
         time.sleep(5)
         pass
+
+matrixportal.set_text('Outside', 0)
+matrixportal.set_text('While', 1)
+matrixportal.set_text('Loop', 2)
