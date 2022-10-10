@@ -13,6 +13,27 @@ try:
 except ImportError:
     print("WiFi secrets are kept in secrets.py, please add them there!")
     raise
+
+# If you are using a board with pre-defined ESP32 Pins:
+esp32_cs = DigitalInOut(board.ESP_CS)
+esp32_ready = DigitalInOut(board.ESP_BUSY)
+esp32_reset = DigitalInOut(board.ESP_RESET)
+
+spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
+
+print("Connecting to AP...")
+while not esp.is_connected:
+    try:
+        esp.connect_AP(secrets["ssid"], secrets["password"])
+    except RuntimeError as e:
+        print("could not connect to AP, retrying: ", e)
+        continue
+print("Connected to", str(esp.ssid, "utf-8"), "\tRSSI:", esp.rssi)
+
+# Initialize a requests object with a socket and esp32spi interface
+socket.set_interface(esp)
+requests.set_socket(socket, esp)
     
 url = 'https://guarded-lake-30538.herokuapp.com/'
 headers = {'X-Api-Key': secrets['api-key']}
@@ -30,10 +51,9 @@ matrixportal.add_text(text_font=FONT, text_position=(1,24), text_color=0xEF7F31)
 
 while True:
     try:
-        r = matrixportal.fetch()
-        r = json.loads(r)
+        r = requests.get(url, headers=headers)
         
-        for message in r['data']:
+        for message in r.json()['data']:
             matrixportal.set_text(message[0], 0)
             matrixportal.set_text(message[1], 1)
             matrixportal.set_text(message[2], 2)
