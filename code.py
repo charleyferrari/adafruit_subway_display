@@ -39,7 +39,7 @@ url = 'https://guarded-lake-30538.herokuapp.com/'
 headers = {'X-Api-Key': secrets['api-key']}
 
 
-matrixportal = MatrixPortal(url=url, headers=headers, status_neopixel=board.NEOPIXEL, debug=False)
+matrixportal = MatrixPortal(esp=esp, debug=False)
 
 FONT = "/fonts/helvR10.bdf"
 
